@@ -27,13 +27,6 @@ type Cors struct {
 	AllowedOrigins string `env:"CORS_ALLOWED_ORIGINS" env-default:"localhost:3000"`
 }
 
-type Grpc struct {
-	Enabled       bool   `env:"GRPC_ENABLED" env-required:"true" env-default:"false"`
-	Host          string `env:"GRPC_HOST" env-default:"0.0.0.0"`
-	Port          int    `env:"GRPC_PORT"`
-	UseReflection bool   `env:"GRPC_USE_REFLECTION" env-default:"false"`
-}
-
 type Pg struct {
 	Host string `env:"PG_HOST" env-required:"true"`
 	Port int    `env:"PG_PORT" env-required:"true"`
@@ -50,11 +43,18 @@ type AuthApi struct {
 	Host string `env:"AUTH_API_HOST" env-required:"true"`
 }
 
+type Redis struct {
+	Host string `env:"REDIS_HOST" env-default:"localhost"`
+	Port int    `env:"REDIS_PORT" env-default:"6379"`
+	Pass string `env:"REDIS_PASS" env-default:""`
+	DB   int    `env:"REDIS_DB" env-default:"0"`
+}
+
 type Config struct {
 	Env     string `env:"ENV" env-default:"local"`
 	App     App
 	Http    Http
-	Grpc    Grpc
+	Redis   Redis
 	Pg      Pg
 	AuthApi AuthApi
 }
