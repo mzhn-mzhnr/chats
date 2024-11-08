@@ -7,10 +7,11 @@ import (
 	"mzhn/chats/pkg/sl"
 )
 
-func (s *Service) auth(ctx context.Context, in *domain.AuthRequest) (*models.User, error) {
+func (s *Service) Auth(ctx context.Context, in *domain.AuthRequest) (*models.User, error) {
 	fn := "auth"
 	log := s.logger.With(sl.Method(fn))
 
+	log.Debug("authenticating")
 	user, err := s.authProvider.Authenticate(ctx, &models.AuthenticateRequest{
 		Token: in.Token,
 		Roles: in.Roles,

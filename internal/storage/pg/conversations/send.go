@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"mzhn/chats/internal/storage/models"
 	"mzhn/chats/internal/storage/pg"
-	"mzhn/chats/internal/storage/pg/models"
 	"mzhn/chats/pkg/sl"
 
 	sq "github.com/Masterminds/squirrel"
