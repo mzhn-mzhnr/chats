@@ -48,6 +48,7 @@ func (h *Server) setup() {
 	authguard := middleware.AuthGuard(h.as)
 	h.GET("/conversations", handlers.GetConversations(h.cs), authguard())
 	h.GET("/conversations/:id", handlers.GetConversation(h.cs), authguard())
+	h.POST("/conversation", handlers.CreateConversation(h.cs), authguard())
 }
 
 func (h *Server) Run(ctx context.Context) error {

@@ -27,6 +27,9 @@ func New() (*App, func(), error) {
 		newApp,
 		_servers,
 
+		http.New,
+		queue.NewRedisConsumer,
+
 		authservice.New,
 		wire.Bind(new(authservice.AuthProvider), new(*auth.Api)),
 
@@ -63,13 +66,14 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, svc *chatservice.Service, rdb *redis.Client) []Server {
+func _servers(cfg *config.Config, shttp *http.Server, rq *queue.RedisConsumer) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
-		servers = append(servers, http.New(cfg, svc))
+		servers = append(servers, shttp)
 	}
-	servers = append(servers, queue.NewRedisConsumer(rdb, svc))
+
+	servers = append(servers, rq)
 
 	return servers
 }

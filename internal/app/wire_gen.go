@@ -13,6 +13,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"mzhn/chats/internal/config"
+	"mzhn/chats/internal/services/authservice"
 	"mzhn/chats/internal/services/chatservice"
 	"mzhn/chats/internal/storage/api/auth"
 	"mzhn/chats/internal/storage/pg/conversations"
@@ -29,20 +30,23 @@ import (
 
 func New() (*App, func(), error) {
 	configConfig := config.New()
-	client, cleanup, err := _redis(configConfig)
+	pool, cleanup, err := _pgxpool(configConfig)
 	if err != nil {
 		return nil, nil, err
 	}
-	pool, cleanup2, err := _pgxpool(configConfig)
+	repository := conversations.New(pool)
+	service := chatservice.New(repository, repository, repository)
+	api := auth.New(configConfig)
+	authserviceService := authservice.New(api)
+	server := http.New(configConfig, service, authserviceService)
+	client, cleanup2, err := _redis(configConfig)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	repository := conversations.New(pool)
-	api := auth.New(configConfig)
-	service := chatservice.New(repository, repository, repository, api)
-	v := _servers(configConfig, service, client)
-	app := newApp(configConfig, client, v)
+	redisConsumer := queue.NewRedisConsumer(client, service)
+	v := _servers(configConfig, server, redisConsumer)
+	app := newApp(configConfig, v)
 	return app, func() {
 		cleanup2()
 		cleanup()
@@ -69,13 +73,14 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, svc *chatservice.Service, rdb *redis.Client) []Server {
+func _servers(cfg *config.Config, shttp *http.Server, rq *queue.RedisConsumer) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
-		servers = append(servers, http.New(cfg, svc))
+		servers = append(servers, shttp)
 	}
-	servers = append(servers, queue.NewRedisConsumer(rdb, svc))
+
+	servers = append(servers, rq)
 
 	return servers
 }

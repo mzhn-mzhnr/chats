@@ -54,9 +54,9 @@ func (c *RedisConsumer) Run(ctx context.Context) error {
 			c.logger.Error("error when sending a message", slog.Any("error", err))
 		}
 
-		c.chatsService.SendMessage(ctx, &domain.NewMessage{
+		_, err = c.chatsService.SendMessage(ctx, &domain.NewMessage{
 			ConversationId: handledMessage.ConversationId,
-			Body:           handledMessage.Question.Message,
+			Body:           handledMessage.Answer.Message,
 			UserId:         nil,
 		})
 		if err != nil {

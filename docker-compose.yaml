@@ -9,8 +9,6 @@ services:
       WAIT_HOSTS: pgc:5432
       PG_HOST: pgc
       PG_PORT: 5432
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       ENV: prod
     depends_on:
       - pgc
