@@ -1,0 +1,97 @@
+basePath: /
+definitions:
+  handlers.Conversation:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  handlers.ConversationResponse:
+    properties:
+      conversation:
+        $ref: '#/definitions/handlers.Conversation'
+      messages:
+        items:
+          $ref: '#/definitions/handlers.Message'
+        type: array
+    type: object
+  handlers.ConversationsResponse:
+    properties:
+      conversations:
+        items:
+          $ref: '#/definitions/handlers.Conversation'
+        type: array
+    type: object
+  handlers.CreateConversationResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.Message:
+    properties:
+      body:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isUser:
+        type: boolean
+    type: object
+info:
+  contact:
+    url: http://github.com/mzhn-mzhnr/chats
+  description: Chat Api Service
+  title: MZHN Chat API
+  version: "0.1"
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ConversationsResponse'
+      security:
+      - Bearer: []
+      summary: Получение диалогов пользователя
+      tags:
+      - conversation
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CreateConversationResponse'
+      security:
+      - Bearer: []
+      summary: Создание нового диалога
+      tags:
+      - conversation
+  /{id}:
+    get:
+      parameters:
+      - description: conversation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ConversationResponse'
+      security:
+      - Bearer: []
+      summary: Получение диалога по ID
+      tags:
+      - conversation
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

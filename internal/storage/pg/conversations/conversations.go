@@ -55,7 +55,7 @@ func (r *Repository) Conversations(ctx context.Context, f *domain.ConversationsF
 	cc := make([]*domain.Conversation, 0)
 	for rows.Next() {
 		c := new(domain.Conversation)
-		if err := rows.Scan(&c.Id, &c.Name, c.CreatedAt); err != nil {
+		if err := rows.Scan(&c.Id, &c.Name, &c.CreatedAt); err != nil {
 			log.Error("failed to scan row", sl.Err(err))
 			return nil, fmt.Errorf("%s: %w", fn, err)
 		}

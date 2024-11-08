@@ -22,7 +22,10 @@ protobuf:
 wire-gen:
 	wire ./internal/app
 
-gen: wire-gen
+swagger:
+	swag init -g .\internal\transport\http\http.go
+
+gen: wire-gen swagger
 
 coverage:
 	go test -v -coverprofile cover.out ./...

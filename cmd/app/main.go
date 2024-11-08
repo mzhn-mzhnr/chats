@@ -8,6 +8,8 @@ import (
 	"mzhn/chats/internal/app"
 
 	"github.com/joho/godotenv"
+
+	_ "mzhn/chats/docs"
 )
 
 var (

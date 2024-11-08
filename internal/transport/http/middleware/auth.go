@@ -4,6 +4,7 @@ import (
 	"mzhn/chats/internal/common"
 	"mzhn/chats/internal/domain"
 	"mzhn/chats/internal/services/authservice"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,8 +17,18 @@ func AuthGuard(svc *authservice.Service) AuthMiddlewareFunc {
 			return func(c echo.Context) error {
 				ctx := c.Request().Context()
 
+				authorization := c.Request().Header.Get("Authorization")
+
+				spl := strings.Split(authorization, " ")
+
+				if len(spl) < 2 {
+					return echo.ErrUnauthorized
+				}
+
+				token := spl[1]
+
 				user, err := svc.Auth(ctx, &domain.AuthRequest{
-					Token: c.Request().Header.Get("Authorization"),
+					Token: token,
 					Roles: roles,
 				})
 				if err != nil {

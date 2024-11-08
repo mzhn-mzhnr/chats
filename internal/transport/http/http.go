@@ -14,6 +14,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	emw "github.com/labstack/echo/v4/middleware"
+	eswag "github.com/swaggo/echo-swagger"
+
+	_ "mzhn/chats/docs"
 )
 
 type Server struct {
@@ -45,12 +48,22 @@ func (h *Server) setup() {
 		AllowCredentials: true,
 	}))
 
+	h.GET("/docs/*", eswag.WrapHandler)
+
 	authguard := middleware.AuthGuard(h.as)
-	h.GET("/conversations", handlers.GetConversations(h.cs), authguard())
-	h.GET("/conversations/:id", handlers.GetConversation(h.cs), authguard())
-	h.POST("/conversation", handlers.CreateConversation(h.cs), authguard())
+	h.GET("/", handlers.GetConversations(h.cs), authguard())
+	h.GET("/:id", handlers.GetConversation(h.cs), authguard())
+	h.POST("/", handlers.CreateConversation(h.cs), authguard())
 }
 
+// @title			MZHN Chat API
+// @version		0.1
+// @description	Chat Api Service
+// @contact.url http://github.com/mzhn-mzhnr/chats
+// @BasePath		/
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
 func (h *Server) Run(ctx context.Context) error {
 	h.setup()
 

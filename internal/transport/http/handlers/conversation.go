@@ -31,6 +31,12 @@ type ConversationResponse struct {
 	Messages     []Message    `json:"messages"`
 }
 
+// @Summary	Получение диалога по ID
+// @Param		id	path	int	true	"conversation ID"
+// @Tags		conversation
+// @Success	200	{object}	ConversationResponse
+// @Router		/{id} [get]
+// @Security Bearer
 func GetConversation(cs *chatservice.Service) echo.HandlerFunc {
 	return func(c echo.Context) error {
 

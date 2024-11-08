@@ -11,6 +11,11 @@ type CreateConversationResponse struct {
 	Id string `json:"id"`
 }
 
+// @Summary	Создание нового диалога
+// @Tags		conversation
+// @Success	200	{object}	CreateConversationResponse
+// @Router		/ [post]
+// @Security Bearer
 func CreateConversation(cs *chatservice.Service) echo.HandlerFunc {
 	return func(c echo.Context) error {
 

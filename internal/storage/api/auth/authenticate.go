@@ -35,6 +35,7 @@ func (a *Api) Authenticate(ctx context.Context, in *models.AuthenticateRequest) 
 	request.Header.Add("Content-Type", "application/json")
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", in.Token))
 
+	log.Debug("requesting", slog.Any("body", string(body)), slog.String("token", in.Token))
 	response, err := a.client.Do(request)
 	if err != nil {
 		log.Error("failed to send request", sl.Err(err))
