@@ -20,6 +20,19 @@ type Message struct {
 	CreatedAt      time.Time
 }
 
+type MessageType struct {
+	Message   string    `json:"message"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type HandledMessage struct {
+	ConversationId *string `json:"conversation_id,omitempty"`
+	UserId         string  `json:"user_id"`
+
+	Question MessageType `json:"question"`
+	Answer   MessageType `json:"answer"`
+}
+
 type NewConversation struct {
 	UserId string
 }

@@ -50,10 +50,18 @@ type AuthApi struct {
 	Host string `env:"AUTH_API_HOST" env-required:"true"`
 }
 
+type Redis struct {
+	Host string `env:"REDIS_HOST" env-required:"true" env-default:"localhost"`
+	Port int    `env:"REDIS_PORT" env-required:"true" env-default:"6379"`
+	Pass string `env:"REDIS_PASS" env-required:"true" env-default:""`
+	DB   int    `env:"REDIS_DB" env-required:"true" env-default:"0"`
+}
+
 type Config struct {
 	Env     string `env:"ENV" env-default:"local"`
 	App     App
 	Http    Http
+	Redis   Redis
 	Grpc    Grpc
 	Pg      Pg
 	AuthApi AuthApi

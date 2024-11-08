@@ -10,12 +10,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"mzhn/chats/internal/config"
 	"mzhn/chats/internal/services/chatservice"
 	"mzhn/chats/internal/storage/api/auth"
 	"mzhn/chats/internal/storage/pg/conversations"
 	"mzhn/chats/internal/transport/http"
+	"mzhn/chats/internal/transport/queue"
 	"time"
 )
 
@@ -27,16 +29,22 @@ import (
 
 func New() (*App, func(), error) {
 	configConfig := config.New()
-	pool, cleanup, err := _pgxpool(configConfig)
+	client, cleanup, err := _redis(configConfig)
 	if err != nil {
+		return nil, nil, err
+	}
+	pool, cleanup2, err := _pgxpool(configConfig)
+	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	repository := conversations.New(pool)
 	api := auth.New(configConfig)
 	service := chatservice.New(repository, repository, repository, api)
-	v := _servers(configConfig, service)
-	app := newApp(configConfig, v)
+	v := _servers(configConfig, service, client)
+	app := newApp(configConfig, client, v)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }
@@ -61,12 +69,36 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, svc *chatservice.Service) []Server {
+func _servers(cfg *config.Config, svc *chatservice.Service, rdb *redis.Client) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
 		servers = append(servers, http.New(cfg, svc))
 	}
+	servers = append(servers, queue.NewRedisConsumer(rdb, svc))
 
 	return servers
+}
+
+func _redis(cfg *config.Config) (*redis.Client, func(), error) {
+
+	conf := cfg.Redis
+
+	ctx := context.Background()
+	slog.Debug("connecting to redis", slog.Any("config", conf))
+	client := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", conf.Host, conf.Port),
+		Password: conf.Pass,
+		DB:       conf.DB,
+	})
+	slog.Debug("ping redis")
+	start := time.Now()
+	if err := client.Ping(ctx).Err(); err != nil {
+		return nil, nil, err
+	}
+	slog.Debug("pinged redis", slog.Duration("took", time.Since(start)))
+
+	return client, func() {
+		client.Close()
+	}, nil
 }
