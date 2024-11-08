@@ -42,6 +42,10 @@ type Pg struct {
 	Name string `env:"PG_NAME" env-required:"true"`
 }
 
+func (pg *Pg) ConnectionString() string {
+	return fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable", pg.User, pg.Pass, pg.Host, pg.Port, pg.Name)
+}
+
 type AuthApi struct {
 	Host string `env:"AUTH_API_HOST" env-required:"true"`
 }

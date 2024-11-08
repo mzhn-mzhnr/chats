@@ -20,9 +20,9 @@ protobuf:
 		$(PROTO)
 
 wire-gen:
-	go generate ./internal/app
+	wire ./internal/app
 
-gen: protobuf wire-gen
+gen: wire-gen
 
 coverage:
 	go test -v -coverprofile cover.out ./...

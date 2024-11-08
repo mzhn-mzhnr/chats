@@ -14,7 +14,7 @@ type Api struct {
 	logger *slog.Logger
 }
 
-func NewApi(cfg *config.Config) *Api {
+func New(cfg *config.Config) *Api {
 
 	client := &http.Client{
 		Transport: http.DefaultTransport,

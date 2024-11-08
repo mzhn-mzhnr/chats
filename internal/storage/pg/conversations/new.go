@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx"
 )
 
-func (r *Repository) NewConversation(ctx context.Context, in *domain.NewConversation) (id string, err error) {
+func (r *Repository) CreateConversation(ctx context.Context, in *domain.NewConversation) (id string, err error) {
 	fn := "NewConversation"
 	log := r.logger.With(sl.Method(fn))
 

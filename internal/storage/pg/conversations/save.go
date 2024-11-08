@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx"
 )
 
-func (r *Repository) SendMessage(ctx context.Context, in *models.NewMessage) error {
+func (r *Repository) SaveMessage(ctx context.Context, in *models.NewMessage) error {
 
 	fn := "SendMessage"
 	log := r.logger.With(sl.Method(fn))

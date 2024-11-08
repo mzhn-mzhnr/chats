@@ -24,7 +24,7 @@ func AuthGuard(svc *chatservice.Service) AuthMiddleware {
 					return err
 				}
 
-				c.Set(string(common.UserCtxKey), user)
+				c.Set(string(common.UserCtxKey), user.Id)
 
 				return next(c)
 			}
