@@ -10,9 +10,10 @@ create table if not exists "conversations" (
 
 create table if not exists "messages" (
   id serial primary key,
-  conversation_id uuid not null foreign key references "conversations"(id),
+  conversation_id uuid not null,
   is_user boolean not null,
   body text not null,
   created_at timestamp default now(),
-  updated_at timestamp
+  updated_at timestamp,
+  foreign key (conversation_id) references conversations(id)
 );
