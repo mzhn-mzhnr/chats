@@ -6,7 +6,7 @@ import (
 	"mzhn/chats/pkg/sl"
 )
 
-func (s *Service) Conversations(ctx context.Context, userId string) ([]*domain.Conversation, error) {
+func (s *Service) Conversations(ctx context.Context) ([]*domain.Conversation, error) {
 
 	fn := "Conversations"
 	log := s.logger.With(sl.Method(fn))

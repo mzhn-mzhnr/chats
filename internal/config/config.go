@@ -42,19 +42,17 @@ type Pg struct {
 	Name string `env:"PG_NAME" env-required:"true"`
 }
 
-type Redis struct {
-	Host string `env:"REDIS_HOST" env-required:"true"`
-	Port int    `env:"REDIS_PORT" env-required:"true"`
-	Pass string `env:"REDIS_PASS"`
+type AuthApi struct {
+	Host string `env:"AUTH_API_HOST" env-required:"true"`
 }
 
 type Config struct {
-	Env   string `env:"ENV" env-default:"local"`
-	App   App
-	Http  Http
-	Grpc  Grpc
-	Pg    Pg
-	Redis Redis
+	Env     string `env:"ENV" env-default:"local"`
+	App     App
+	Http    Http
+	Grpc    Grpc
+	Pg      Pg
+	AuthApi AuthApi
 }
 
 func New() *Config {
