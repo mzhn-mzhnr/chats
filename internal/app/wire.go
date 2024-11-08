@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"mzhn/chats/internal/services/authservice"
 	"mzhn/chats/internal/services/chatservice"
 	"mzhn/chats/internal/storage/api/auth"
 	"mzhn/chats/internal/storage/pg/conversations"
@@ -25,10 +26,11 @@ func New() (*App, func(), error) {
 	panic(wire.Build(
 		newApp,
 		_servers,
-		_redis,
+
+		authservice.New,
+		wire.Bind(new(authservice.AuthProvider), new(*auth.Api)),
 
 		chatservice.New,
-		wire.Bind(new(chatservice.AuthProvider), new(*auth.Api)),
 		wire.Bind(new(chatservice.ConversationCreator), new(*conversations.Repository)),
 		wire.Bind(new(chatservice.ConversationsProvider), new(*conversations.Repository)),
 		wire.Bind(new(chatservice.MessageSaver), new(*conversations.Repository)),
@@ -36,6 +38,7 @@ func New() (*App, func(), error) {
 		conversations.New,
 		auth.New,
 
+		_redis,
 		_pgxpool,
 		config.New,
 	))

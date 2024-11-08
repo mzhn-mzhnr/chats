@@ -21,29 +21,22 @@ type MessageSaver interface {
 	SaveMessage(ctx context.Context, in *models.NewMessage) error
 }
 
-type AuthProvider interface {
-	Authenticate(ctx context.Context, in *models.AuthenticateRequest) (*models.User, error)
-}
-
 type Service struct {
 	logger       *slog.Logger
 	messageSaver MessageSaver
 	convProvider ConversationsProvider
 	convCreator  ConversationCreator
-	authProvider AuthProvider
 }
 
 func New(
 	msgsaver MessageSaver,
 	convprovider ConversationsProvider,
 	convcreator ConversationCreator,
-	authProvider AuthProvider,
 ) *Service {
 	return &Service{
 		logger:       slog.With(sl.Module("chatservice")),
 		messageSaver: msgsaver,
 		convProvider: convprovider,
 		convCreator:  convcreator,
-		authProvider: authProvider,
 	}
 }

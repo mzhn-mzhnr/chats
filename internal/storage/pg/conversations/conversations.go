@@ -29,6 +29,7 @@ func (r *Repository) Conversations(ctx context.Context, f *domain.ConversationsF
 		Select("id", "name", "created_at").
 		From(pg.ConversationsTable).
 		Where(sq.Eq{"owner_id": f.UserId}).
+		OrderBy("created_at DESC").
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := qb.ToSql()

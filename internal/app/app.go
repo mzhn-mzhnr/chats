@@ -8,8 +8,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-
-	"github.com/redis/go-redis/v9"
 )
 
 type Server interface {
@@ -19,14 +17,12 @@ type Server interface {
 type App struct {
 	servers []Server
 	cfg     *config.Config
-	redis   *redis.Client
 }
 
-func newApp(cfg *config.Config, redis *redis.Client, servers []Server) *App {
+func newApp(cfg *config.Config, servers []Server) *App {
 	return &App{
 		servers: servers,
 		cfg:     cfg,
-		redis:   redis,
 	}
 }
 

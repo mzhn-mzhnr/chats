@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 	"mzhn/chats/internal/config"
+	"mzhn/chats/internal/services/authservice"
 	"mzhn/chats/internal/services/chatservice"
+	"mzhn/chats/internal/transport/http/handlers"
+	"mzhn/chats/internal/transport/http/middleware"
 	"mzhn/chats/pkg/sl"
 	"strings"
 
@@ -20,14 +23,16 @@ type Server struct {
 	logger *slog.Logger
 
 	cs *chatservice.Service
+	as *authservice.Service
 }
 
-func New(cfg *config.Config, cs *chatservice.Service) *Server {
+func New(cfg *config.Config, cs *chatservice.Service, as *authservice.Service) *Server {
 	return &Server{
 		Echo:   echo.New(),
 		logger: slog.Default().With(sl.Module("http")),
 		cfg:    cfg,
 		cs:     cs,
+		as:     as,
 	}
 }
 
@@ -40,6 +45,9 @@ func (h *Server) setup() {
 		AllowCredentials: true,
 	}))
 
+	authguard := middleware.AuthGuard(h.as)
+	h.GET("/conversations", handlers.GetConversations(h.cs), authguard())
+	h.GET("/conversations/:id", handlers.GetConversation(h.cs), authguard())
 }
 
 func (h *Server) Run(ctx context.Context) error {

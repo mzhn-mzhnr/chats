@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Conversations(cs *chatservice.Service) echo.HandlerFunc {
+func GetConversations(cs *chatservice.Service) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		userId := c.Get(string(common.UserCtxKey)).(string)

@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     environment:
-      WAIT_HOSTS: pg:5432
+      WAIT_HOSTS: pgc:5432
       PG_HOST: pgc
       PG_PORT: 5432
       REDIS_HOST: redis
@@ -27,7 +27,7 @@ services:
     volumes:
       - chats_pg_data:/var/lib/postgresql/data
     ports:
-      - ${PG_PORT}:5432
+      - 5444:5432
 
 volumes:
   chats_pg_data:
