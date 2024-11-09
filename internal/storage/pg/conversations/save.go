@@ -28,7 +28,7 @@ func (r *Repository) SaveMessage(ctx context.Context, in *models.NewMessage) err
 	qb := sq.
 		Insert(pg.MessagesTable).
 		Columns("conversation_id", "is_user", "body", "created_at").
-		Values(in.ConversationId, in.ConversationId, in.Body, in.CreatedAt).
+		Values(in.ConversationId, in.IsUser, in.Body, in.CreatedAt).
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := qb.ToSql()

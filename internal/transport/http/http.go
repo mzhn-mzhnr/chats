@@ -60,7 +60,7 @@ func (h *Server) setup() {
 // @version		0.1
 // @description	Chat Api Service
 // @contact.url http://github.com/mzhn-mzhnr/chats
-// @BasePath		/
+// @BasePath		/conversations/
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
