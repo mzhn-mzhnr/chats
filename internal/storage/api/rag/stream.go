@@ -131,8 +131,9 @@ func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan
 
 		var j data
 		if err := json.Unmarshal([]byte(line), &j); err != nil {
-			log.Error("failed to unmarshal response", sl.Err(err))
-			return nil, fmt.Errorf("%s: %w", fn, err)
+			// log.Error("failed to unmarshal response", sl.Err(err))
+			// return nil, fmt.Errorf("%s: %w", fn, err)
+			continue
 		}
 
 		log.Info(
@@ -142,7 +143,9 @@ func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan
 			slog.Any("data", j),
 		)
 
-		if j.Metainfo != nil {
+		if j.Metainfo == nil && j.Response == nil {
+			continue
+		} else if j.Metainfo != nil {
 			m := j.Metainfo
 			meta.FileId = m.FileId
 			meta.Filename = m.FileName
