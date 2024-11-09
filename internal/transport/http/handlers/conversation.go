@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"mzhn/chats/internal/domain"
 	"mzhn/chats/internal/services/chatservice"
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samber/lo"
 )
 
 type ConversationRequest struct {
@@ -19,11 +17,17 @@ type Conversation struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+type Meta struct {
+	FileId   string `json:"fileId"`
+	Filename string `json:"fileName"`
+	SlideNum int    `json:"slideNum"`
+}
 type Message struct {
 	Id        int       `json:"id"`
 	Body      string    `json:"body"`
 	IsUser    bool      `json:"isUser"`
 	CreatedAt time.Time `json:"createdAt"`
+	Meta      *Meta     `json:"meta,omitempty"`
 }
 
 type ConversationResponse struct {
@@ -58,14 +62,26 @@ func GetConversation(cs *chatservice.Service) echo.HandlerFunc {
 				Name:      conv.Name,
 				CreatedAt: conv.CreatedAt,
 			},
-			Messages: lo.Map(conv.Messages, func(m *domain.Message, _ int) Message {
-				return Message{
-					Id:        m.Id,
-					Body:      m.Body,
-					IsUser:    m.IsUser,
-					CreatedAt: m.CreatedAt,
+			Messages: make([]Message, len(conv.Messages)),
+		}
+
+		for i, m := range conv.Messages {
+			var meta *Meta
+			if !m.IsUser {
+				meta = &Meta{
+					FileId:   m.Meta.FileId,
+					Filename: m.Meta.FileName,
+					SlideNum: m.Meta.Slidenum,
 				}
-			}),
+			}
+
+			response.Messages[i] = Message{
+				Id:        m.Id,
+				Body:      m.Body,
+				IsUser:    m.IsUser,
+				CreatedAt: m.CreatedAt,
+				Meta:      meta,
+			}
 		}
 
 		return c.JSON(200, response)

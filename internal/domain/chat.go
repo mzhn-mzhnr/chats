@@ -22,6 +22,13 @@ type Message struct {
 	IsUser         bool
 	ConversationId string
 	CreatedAt      time.Time
+	Meta           *AnswerMeta
+}
+
+type AnswerMeta struct {
+	FileId   string
+	FileName string
+	Slidenum int
 }
 
 type MessageType struct {

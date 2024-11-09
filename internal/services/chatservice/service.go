@@ -18,11 +18,12 @@ type ConversationCreator interface {
 }
 
 type MessageSaver interface {
-	SaveMessage(ctx context.Context, in *models.NewMessage) error
+	SaveQuestion(ctx context.Context, in *models.Question) error
+	SaveAnswer(ctx context.Context, in *models.Answer) error
 }
 
 type RagProvider interface {
-	Stream(ctx context.Context, input string, eventCh chan<- []byte) error
+	Stream(ctx context.Context, input string, eventCh chan<- []byte) (*models.AnswerMeta, error)
 }
 
 type Service struct {

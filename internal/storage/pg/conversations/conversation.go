@@ -8,10 +8,21 @@ import (
 	"mzhn/chats/internal/domain"
 	"mzhn/chats/internal/storage/pg"
 	"mzhn/chats/pkg/sl"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx"
 )
+
+type message struct {
+	Id        int
+	IsUser    bool
+	Body      string
+	CreatedAt time.Time
+	Slide     *int
+	FileId    *string
+	Filename  *string
+}
 
 func (r *Repository) Conversation(ctx context.Context, id string) (*domain.ConversationContent, error) {
 
@@ -26,9 +37,11 @@ func (r *Repository) Conversation(ctx context.Context, id string) (*domain.Conve
 	defer conn.Release()
 
 	qb := sq.
-		Select("id", "is_user", "body", "created_at").
-		From(pg.MessagesTable).
+		Select("m.id", "m.is_user", "m.body", "m.created_at", "am.slide_num", "am.file_id", "am.file_name").
+		From(pg.MessagesTable + " m").
+		LeftJoin(pg.AnswerMetaTable + " am on am.message_id = m.id").
 		Where(sq.Eq{"conversation_id": id}).
+		OrderBy("m.created_at asc").
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := qb.ToSql()
@@ -53,13 +66,39 @@ func (r *Repository) Conversation(ctx context.Context, id string) (*domain.Conve
 
 	mm := make([]*domain.Message, 0)
 	for rows.Next() {
-		m := new(domain.Message)
-		if err := rows.Scan(&m.Id, &m.IsUser, &m.Body, &m.CreatedAt); err != nil {
+		m := &message{}
+		if err := rows.Scan(
+			&m.Id,
+			&m.IsUser,
+			&m.Body,
+			&m.CreatedAt,
+			&m.Slide,
+			&m.FileId,
+			&m.Filename,
+		); err != nil {
 			log.Error("failed to scan row", sl.Err(err))
 			return nil, fmt.Errorf("%s: %w", fn, err)
 		}
 
-		mm = append(mm, m)
+		log.Debug("scanned message", slog.Any("message", m))
+
+		message := &domain.Message{
+			ConversationId: id,
+			Id:             m.Id,
+			Body:           m.Body,
+			CreatedAt:      m.CreatedAt,
+			IsUser:         m.IsUser,
+		}
+
+		if !m.IsUser {
+			message.Meta = &domain.AnswerMeta{
+				FileId:   *m.FileId,
+				FileName: *m.Filename,
+				Slidenum: *m.Slide,
+			}
+		}
+
+		mm = append(mm, message)
 	}
 
 	res := &domain.ConversationContent{

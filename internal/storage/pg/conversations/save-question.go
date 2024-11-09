@@ -13,9 +13,9 @@ import (
 	"github.com/jackc/pgx"
 )
 
-func (r *Repository) SaveMessage(ctx context.Context, in *models.NewMessage) error {
+func (r *Repository) SaveQuestion(ctx context.Context, in *models.Question) error {
 
-	fn := "SendMessage"
+	fn := "SaveQuestion"
 	log := r.logger.With(sl.Method(fn))
 
 	conn, err := r.pool.Acquire(ctx)
@@ -28,7 +28,7 @@ func (r *Repository) SaveMessage(ctx context.Context, in *models.NewMessage) err
 	qb := sq.
 		Insert(pg.MessagesTable).
 		Columns("conversation_id", "is_user", "body", "created_at").
-		Values(in.ConversationId, in.IsUser, in.Body, in.CreatedAt).
+		Values(in.ConversationId, true, in.Body, in.CreatedAt).
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := qb.ToSql()

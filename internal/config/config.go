@@ -79,7 +79,7 @@ func New() *Config {
 
 	setupLogger(config)
 
-	slog.Debug("config", slog.Any("c", config))
+	// slog.Debug("config", slog.Any("c", config))
 	return config
 }
 
