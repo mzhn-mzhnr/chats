@@ -58,6 +58,7 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessageRequest)
 			Body:           res.Answer,
 			CreatedAt:      time.Now(),
 		},
+		Sources: make([]models.AnswerMeta, len(res.Sources)),
 	}
 
 	for i, s := range res.Sources {

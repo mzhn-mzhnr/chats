@@ -211,8 +211,11 @@ const docTemplate = `{
                 "isUser": {
                     "type": "boolean"
                 },
-                "meta": {
-                    "$ref": "#/definitions/handlers.Meta"
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.Meta"
+                    }
                 }
             }
         },

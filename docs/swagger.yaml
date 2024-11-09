@@ -58,8 +58,10 @@ definitions:
         type: integer
       isUser:
         type: boolean
-      meta:
-        $ref: '#/definitions/handlers.Meta'
+      sources:
+        items:
+          $ref: '#/definitions/handlers.Meta'
+        type: array
     type: object
   handlers.Meta:
     properties:

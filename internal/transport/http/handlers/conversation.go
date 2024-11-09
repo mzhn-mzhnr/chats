@@ -27,7 +27,7 @@ type Message struct {
 	Body      string    `json:"body"`
 	IsUser    bool      `json:"isUser"`
 	CreatedAt time.Time `json:"createdAt"`
-	Meta      *Meta     `json:"meta,omitempty"`
+	Sources   []Meta    `json:"sources"`
 }
 
 type ConversationResponse struct {
@@ -66,21 +66,22 @@ func GetConversation(cs *chatservice.Service) echo.HandlerFunc {
 		}
 
 		for i, m := range conv.Messages {
-			var meta *Meta
-			if !m.IsUser {
-				meta = &Meta{
-					FileId:   m.Meta.FileId,
-					Filename: m.Meta.FileName,
-					SlideNum: m.Meta.Slidenum,
-				}
-			}
-
 			response.Messages[i] = Message{
 				Id:        m.Id,
 				Body:      m.Body,
 				IsUser:    m.IsUser,
 				CreatedAt: m.CreatedAt,
-				Meta:      meta,
+			}
+
+			if !m.IsUser {
+				response.Messages[i].Sources = make([]Meta, len(m.Sources))
+				for j, s := range m.Sources {
+					response.Messages[i].Sources[j] = Meta{
+						FileId:   s.FileId,
+						Filename: s.FileName,
+						SlideNum: s.Slidenum,
+					}
+				}
 			}
 		}
 

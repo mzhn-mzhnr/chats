@@ -26,7 +26,7 @@ type Message struct {
 	IsUser         bool
 	ConversationId string
 	CreatedAt      time.Time
-	Meta           *AnswerMeta
+	Sources        []AnswerMeta
 }
 
 type AnswerMeta struct {
@@ -62,7 +62,7 @@ type Conversation struct {
 
 type ConversationContent struct {
 	Conversation
-	Messages []*Message
+	Messages []Message
 }
 
 type ConversationsFilter struct {

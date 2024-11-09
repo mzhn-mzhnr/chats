@@ -53,7 +53,7 @@ func (a *Api) Invoke(ctx context.Context, in *models.RagRequest) (*models.RagRes
 		return nil, fmt.Errorf("%s: %w", fn, err)
 	}
 
-	endpoint := fmt.Sprintf("%s/chat/stream", a.host)
+	endpoint := fmt.Sprintf("%s/chat/invoke", a.host)
 
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
@@ -81,6 +81,8 @@ func (a *Api) Invoke(ctx context.Context, in *models.RagRequest) (*models.RagRes
 		log.Error("failed to read response", sl.Err(err))
 		return nil, fmt.Errorf("%s: %w", fn, err)
 	}
+
+	slog.Debug("response", slog.String("body", string(resp)))
 
 	var j invokeResponse
 	if err := json.Unmarshal(resp, &j); err != nil {
