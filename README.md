@@ -2,7 +2,7 @@
 
 Сервис работы с чатами
 
-## Технологии
+## :gear: Технологии
 
 Необходимое окружение
 
@@ -16,11 +16,11 @@
 - [pgx](https://github.com/jackc/pgx) (драйвер для работы с PostgreSQL)
 - [wire](https://github.com/google/wire) (compile-time DI-контейнер)
 
-## Flow отправки сообщения
+## :rocket: Flow отправки сообщения
 
 ![flow](./.github/question-flow.png)
 
-## Конфигурация
+## :screwdriver: Конфигурация
 
 Приложение настраивается при помощи переменных среды (Environment variables)
 
@@ -33,12 +33,12 @@ cp example.env .env
 
 После чего отредактируйте файл `.env` в вашем текстовом редакторе
 
-## DEPLOY
+## :rocket: DEPLOY
 
 > [!Note]
 > Обязательно настройте конфиг приложения. [Как это сделать?](#конфигурация)
 
-### Docker
+### :whale: Docker
 
 1. Склонируйте репозиторий `git clone  https://github.com/mzhn-mzhnr/chats.git`
 
@@ -50,7 +50,7 @@ docker compose up --build
 
 При запуске таким образом миграции для базы данных применяться автоматически
 
-### Локальная сборка
+### :desktop_computer: Локальная сборка
 
 Для локальной сборки был описан `Makefile`
 Для сборки выполните команду
