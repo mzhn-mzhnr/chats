@@ -1,5 +1,23 @@
 basePath: /conversations/
 definitions:
+  domain.AnswerMeta:
+    properties:
+      fileId:
+        type: string
+      fileName:
+        type: string
+      slideNum:
+        type: integer
+    type: object
+  domain.SentMessage:
+    properties:
+      answer:
+        type: string
+      sources:
+        items:
+          $ref: '#/definitions/domain.AnswerMeta'
+        type: array
+    type: object
   handlers.Conversation:
     properties:
       createdAt:
@@ -120,7 +138,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.SendMessageRequest'
+            $ref: '#/definitions/domain.SentMessage'
       security:
       - Bearer: []
       summary: Send message

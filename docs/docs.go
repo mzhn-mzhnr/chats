@@ -83,7 +83,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.SendMessageRequest"
+                            "$ref": "#/definitions/domain.SentMessage"
                         }
                     }
                 }
@@ -121,6 +121,34 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AnswerMeta": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "slideNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.SentMessage": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AnswerMeta"
+                    }
+                }
+            }
+        },
         "handlers.Conversation": {
             "type": "object",
             "properties": {
