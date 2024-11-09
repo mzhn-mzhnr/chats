@@ -3,6 +3,7 @@ package chatservice
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"mzhn/chats/internal/domain"
@@ -53,7 +54,19 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 			return nil, err
 		}
 
-		in.EventCh <- event
+		data := struct {
+			Response string `json:"response"`
+		}{
+			Response: string(event),
+		}
+
+		j, err := json.Marshal(data)
+		if err != nil {
+			log.Error("failed to marshal event", sl.Err(err))
+			return nil, err
+		}
+
+		in.EventCh <- j
 		log.Debug("sent event")
 	}
 
@@ -83,7 +96,30 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 		return nil, fmt.Errorf("%s: %w", fn, err)
 	}
 
+	metadata := struct {
+		FileId   string `json:"fileId"`
+		FileName string `json:"filename"`
+		Slidenum int    `json:"slidenum"`
+	}{
+		FileId:   m.FileId,
+		FileName: m.Filename,
+		Slidenum: m.Slide,
+	}
+
+	j, err := json.Marshal(metadata)
+	if err != nil {
+		log.Error("failed to marshal metadata", sl.Err(err))
+		return nil, fmt.Errorf("%s: %w", fn, err)
+	}
+
+	in.EventCh <- j
+
 	return &domain.SentMessage{
 		ConversationId: in.ConversationId,
+		AnswerMeta: &domain.AnswerMeta{
+			FileId:   m.FileId,
+			FileName: m.Filename,
+			Slidenum: m.Slide,
+		},
 	}, nil
 }

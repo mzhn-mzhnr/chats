@@ -14,6 +14,7 @@ type NewMessage struct {
 
 type SentMessage struct {
 	ConversationId string
+	AnswerMeta     *AnswerMeta
 }
 
 type Message struct {
