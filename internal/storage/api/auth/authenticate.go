@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mzhn/chats/internal/storage"
 	"mzhn/chats/internal/storage/models"
 	"mzhn/chats/pkg/sl"
 	"net/http"
@@ -45,6 +46,12 @@ func (a *Api) Authenticate(ctx context.Context, in *models.AuthenticateRequest) 
 
 	if response.StatusCode != http.StatusOK {
 		log.Error("response status is not OK", slog.Int("status", response.StatusCode))
+
+		if response.StatusCode == http.StatusUnauthorized {
+			log.Warn("invalid token", slog.String("token", in.Token))
+			return nil, fmt.Errorf("%s: %w", fn, storage.ErrUnauthorized)
+		}
+
 		return nil, fmt.Errorf("%s: %w", fn, fmt.Errorf("failed request (%d)", response.StatusCode))
 	}
 
