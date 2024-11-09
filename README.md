@@ -15,7 +15,6 @@
 - Go 1.22
 - [pgx](https://github.com/jackc/pgx) (драйвер для работы с PostgreSQL)
 - [wire](https://github.com/google/wire) (compile-time DI-контейнер)
-- JWT
 
 ## Flow отправки сообщения
 
