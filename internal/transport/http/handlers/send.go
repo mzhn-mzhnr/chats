@@ -87,15 +87,19 @@ func SendMessage(cs *chatservice.Service) echo.HandlerFunc {
 		ctx := c.Request().Context()
 
 		eventCh := make(chan []byte)
-		_, err := cs.SendMessage(ctx, &domain.NewMessage{
-			Body:           req.Input,
-			ConversationId: req.ConversationId,
-			IsUser:         true,
-			CreatedAt:      time.Now(),
-		})
-		if err != nil {
-			return err
-		}
+		done := make(chan error)
+
+		go func() {
+			_, err := cs.SendMessage(ctx, &domain.NewMessage{
+				Body:           req.Input,
+				ConversationId: req.ConversationId,
+				IsUser:         true,
+				CreatedAt:      time.Now(),
+				EventCh:        eventCh,
+			})
+
+			done <- err
+		}()
 
 		w := c.Response()
 		w.Header().Set("Content-Type", "text/event-stream")

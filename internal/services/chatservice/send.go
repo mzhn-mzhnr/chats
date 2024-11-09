@@ -11,6 +11,8 @@ import (
 )
 
 func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*domain.SentMessage, error) {
+	defer close(in.EventCh)
+
 	fn := "SendMessage"
 	log := s.logger.With(sl.Method(fn))
 
