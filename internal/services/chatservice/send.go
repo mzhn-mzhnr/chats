@@ -19,17 +19,6 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessageRequest)
 		return nil, fmt.Errorf("%s: %w", fn, err)
 	}
 
-	if err := s.messageSaver.SaveQuestion(ctx, &models.Question{
-		Message: models.Message{
-			ConversationId: in.ConversationId,
-			Body:           in.Body,
-			CreatedAt:      in.CreatedAt,
-		},
-	}); err != nil {
-		log.Error("failed to save message", sl.Err(err))
-		return nil, fmt.Errorf("%s: %w", fn, err)
-	}
-
 	req := &models.RagRequest{
 		Input:       in.Body,
 		ChatHistory: make([]models.ChatHistoryEntry, 0, len(history.Messages)),
@@ -45,6 +34,17 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessageRequest)
 	res, err := s.rag.Invoke(ctx, req)
 	if err != nil {
 		log.Error("failed to invoke rag", sl.Err(err))
+		return nil, fmt.Errorf("%s: %w", fn, err)
+	}
+
+	if err := s.messageSaver.SaveQuestion(ctx, &models.Question{
+		Message: models.Message{
+			ConversationId: in.ConversationId,
+			Body:           in.Body,
+			CreatedAt:      in.CreatedAt,
+		},
+	}); err != nil {
+		log.Error("failed to save message", sl.Err(err))
 		return nil, fmt.Errorf("%s: %w", fn, err)
 	}
 

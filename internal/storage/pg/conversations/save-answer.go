@@ -64,9 +64,11 @@ func (r *Repository) SaveAnswer(ctx context.Context, in *models.Answer) error {
 		}
 	}
 
-	if err := r.saveAnswerMetas(ctx, metas); err != nil {
-		log.Error("failed to save answer meta", sl.Err(err))
-		return fmt.Errorf("%s: %w", fn, err)
+	if len(metas.Metas) != 0 {
+		if err := r.saveAnswerMetas(ctx, metas); err != nil {
+			log.Error("failed to save answer meta", sl.Err(err))
+			return fmt.Errorf("%s: %w", fn, err)
+		}
 	}
 
 	return nil

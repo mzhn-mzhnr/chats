@@ -72,7 +72,13 @@ func (a *Api) Invoke(ctx context.Context, in *models.RagRequest) (*models.RagRes
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		log.Error("unexpected status code", slog.Int("status", response.StatusCode))
+		resp, err := io.ReadAll(response.Body)
+		if err != nil {
+			log.Error("failed to read response", sl.Err(err))
+			return nil, fmt.Errorf("%s: %w", fn, err)
+		}
+
+		log.Error("unexpected status code", slog.Int("status", response.StatusCode), slog.Any("body", resp))
 		return nil, fmt.Errorf("%s: unexpected request error (%d)", fn, response.StatusCode)
 	}
 
