@@ -57,8 +57,9 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 		if err != nil {
 			log.Error("failed to stream rag response", sl.Err(err))
 			close(meta)
+		} else {
+			meta <- m
 		}
-		meta <- m
 		log.Info("rag stream ends", slog.Any("meta", m))
 	}()
 
