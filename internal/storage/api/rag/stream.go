@@ -49,7 +49,7 @@ func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan
 	}
 
 	body, err := json.Marshal(map[string]any{
-		"input":        in,
+		"input":        in.Input,
 		"chat_history": chathistory,
 	})
 	if err != nil {
