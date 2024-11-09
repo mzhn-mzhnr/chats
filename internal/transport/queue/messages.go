@@ -49,6 +49,7 @@ func (c *RedisConsumer) Run(ctx context.Context) error {
 			ConversationId: handledMessage.ConversationId,
 			Body:           handledMessage.Question.Message,
 			UserId:         &handledMessage.UserId,
+			CreatedAt:      handledMessage.Question.CreatedAt,
 		})
 		if err != nil {
 			c.logger.Error("error when sending a message", slog.Any("error", err))
@@ -58,6 +59,7 @@ func (c *RedisConsumer) Run(ctx context.Context) error {
 			ConversationId: handledMessage.ConversationId,
 			Body:           handledMessage.Answer.Message,
 			UserId:         nil,
+			CreatedAt:      handledMessage.Answer.CreatedAt,
 		})
 		if err != nil {
 			c.logger.Error("error when sending a message", slog.Any("error", err))

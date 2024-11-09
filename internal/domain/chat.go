@@ -8,6 +8,7 @@ type NewMessage struct {
 	Body           string
 	UserId         *string
 	ConversationId string
+	CreatedAt      time.Time
 }
 
 type SentMessage struct {

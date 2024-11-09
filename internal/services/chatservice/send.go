@@ -16,6 +16,7 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 		ConversationId: in.ConversationId,
 		IsUser:         in.UserId != nil,
 		Body:           in.Body,
+		CreatedAt:      in.CreatedAt,
 	}); err != nil {
 		log.Error("failed to save message", sl.Err(err))
 		return nil, fmt.Errorf("%s: %w", fn, err)
