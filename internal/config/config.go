@@ -47,18 +47,10 @@ type RagApi struct {
 	Host string `env:"RAG_API_HOST" env-required:"true"`
 }
 
-type Redis struct {
-	Host string `env:"REDIS_HOST" env-default:"localhost"`
-	Port int    `env:"REDIS_PORT" env-default:"6379"`
-	Pass string `env:"REDIS_PASS" env-default:""`
-	DB   int    `env:"REDIS_DB" env-default:"0"`
-}
-
 type Config struct {
 	Env     string `env:"ENV" env-default:"local"`
 	App     App
 	Http    Http
-	Redis   Redis
 	Pg      Pg
 	AuthApi AuthApi
 	RagApi  RagApi
