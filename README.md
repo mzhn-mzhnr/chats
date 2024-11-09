@@ -19,7 +19,7 @@
 
 ## Flow отправки сообщения
 
-[!flow](./.github/question-flow.png)
+![flow](./.github/question-flow.png)
 
 ## Конфигурация
 
