@@ -51,10 +51,20 @@ func (r *Repository) SaveAnswer(ctx context.Context, in *models.Answer) error {
 		return fmt.Errorf("%s: %w", fn, err)
 	}
 
-	if err := r.saveAnswerMeta(ctx, &models.AnswerMetaSave{
-		MessageId:  id,
-		AnswerMeta: in.AnswerMeta,
-	}); err != nil {
+	metas := &answerMetaSave{
+		MessageId: id,
+		Metas:     make([]models.AnswerMeta, len(in.Sources)),
+	}
+
+	for i, s := range in.Sources {
+		metas.Metas[i] = models.AnswerMeta{
+			Filename: s.Filename,
+			Slide:    s.Slide,
+			FileId:   s.FileId,
+		}
+	}
+
+	if err := r.saveAnswerMetas(ctx, metas); err != nil {
 		log.Error("failed to save answer meta", sl.Err(err))
 		return fmt.Errorf("%s: %w", fn, err)
 	}
@@ -62,7 +72,12 @@ func (r *Repository) SaveAnswer(ctx context.Context, in *models.Answer) error {
 	return nil
 }
 
-func (r *Repository) saveAnswerMeta(ctx context.Context, in *models.AnswerMetaSave) error {
+type answerMetaSave struct {
+	MessageId int
+	Metas     []models.AnswerMeta
+}
+
+func (r *Repository) saveAnswerMetas(ctx context.Context, metas *answerMetaSave) error {
 
 	fn := "saveAnswerMeta"
 	log := r.logger.With(sl.Method(fn))
@@ -77,8 +92,11 @@ func (r *Repository) saveAnswerMeta(ctx context.Context, in *models.AnswerMetaSa
 	qb := sq.
 		Insert(pg.AnswerMetaTable).
 		Columns("message_id", "slide_num", "file_id", "file_name").
-		Values(in.MessageId, in.AnswerMeta.Slide, in.FileId, in.AnswerMeta.Filename).
 		PlaceholderFormat(sq.Dollar)
+
+	for _, m := range metas.Metas {
+		qb = qb.Values(metas.MessageId, m.Slide, m.FileId, m.Filename)
+	}
 
 	sql, args, err := qb.ToSql()
 	if err != nil {

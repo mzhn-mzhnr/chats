@@ -4,17 +4,20 @@ import (
 	"time"
 )
 
-type NewMessage struct {
+type NewMessageRequest struct {
 	Body           string
 	ConversationId string
-	IsUser         bool
 	CreatedAt      time.Time
-	EventCh        chan<- []byte
+}
+
+type StreamMessageRequest struct {
+	NewMessageRequest
+	EventCh chan<- []byte
 }
 
 type SentMessage struct {
-	ConversationId string
-	AnswerMeta     *AnswerMeta
+	Answer  string       `json:"answer"`
+	Sources []AnswerMeta `json:"sources"`
 }
 
 type Message struct {
@@ -27,9 +30,9 @@ type Message struct {
 }
 
 type AnswerMeta struct {
-	FileId   string
-	FileName string
-	Slidenum int
+	FileId   string `json:"fileId"`
+	FileName string `json:"fileName"`
+	Slidenum int    `json:"slideNum"`
 }
 
 type MessageType struct {

@@ -30,7 +30,7 @@ type data struct {
 	*Response
 }
 
-func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan<- []byte) (*models.AnswerMeta, error) {
+func (a *Api) Stream(ctx context.Context, in *models.RagRequest, eventCh chan<- []byte) (*models.AnswerMeta, error) {
 	defer close(eventCh)
 
 	fn := "Stream"

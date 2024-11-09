@@ -17,14 +17,19 @@ type ChatHistoryEntry struct {
 	Body   string
 }
 
-type StreamRequest struct {
+type RagRequest struct {
 	Input       string `json:"input"`
 	ChatHistory []ChatHistoryEntry
 }
 
+type RagResponse struct {
+	Answer  string
+	Sources []AnswerMeta
+}
+
 type Answer struct {
 	Message
-	AnswerMeta
+	Sources []AnswerMeta
 }
 
 type AnswerMetaSave struct {
