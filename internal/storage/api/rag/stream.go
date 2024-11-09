@@ -49,8 +49,10 @@ func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan
 	}
 
 	body, err := json.Marshal(map[string]any{
-		"input":        in.Input,
-		"chat_history": chathistory,
+		"input": map[string]any{
+			"input":        in.Input,
+			"chat_history": chathistory,
+		},
 	})
 	if err != nil {
 		log.Error("failed to marshal request", sl.Err(err))
