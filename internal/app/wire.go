@@ -12,7 +12,6 @@ import (
 	"mzhn/chats/internal/storage/api/rag"
 	"mzhn/chats/internal/storage/pg/conversations"
 	"mzhn/chats/internal/transport/http"
-	"mzhn/chats/internal/transport/queue"
 	"time"
 
 	"mzhn/chats/internal/config"
@@ -20,7 +19,6 @@ import (
 	"github.com/google/wire"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/redis/go-redis/v9"
 )
 
 func New() (*App, func(), error) {
@@ -29,7 +27,6 @@ func New() (*App, func(), error) {
 		_servers,
 
 		http.New,
-		queue.NewRedisConsumer,
 
 		authservice.New,
 		wire.Bind(new(authservice.AuthProvider), new(*auth.Api)),
@@ -44,7 +41,6 @@ func New() (*App, func(), error) {
 		auth.New,
 		rag.New,
 
-		_redis,
 		_pgxpool,
 		config.New,
 	))
@@ -69,39 +65,12 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, shttp *http.Server, _ *queue.RedisConsumer) []Server {
+func _servers(cfg *config.Config, shttp *http.Server) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
 		servers = append(servers, shttp)
 	}
 
-	// servers = append(servers, rq)
-
 	return servers
-}
-
-func _redis(cfg *config.Config) (*redis.Client, func(), error) {
-
-	conf := cfg.Redis
-
-	ctx := context.Background()
-
-	slog.Debug("connecting to redis", slog.Any("config", conf))
-	client := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", conf.Host, conf.Port),
-		Password: conf.Pass,
-		DB:       conf.DB,
-	})
-
-	slog.Debug("ping redis")
-	start := time.Now()
-	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, nil, err
-	}
-	slog.Debug("pinged redis", slog.Duration("took", time.Since(start)))
-
-	return client, func() {
-		client.Close()
-	}, nil
 }

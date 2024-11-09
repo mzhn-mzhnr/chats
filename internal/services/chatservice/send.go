@@ -18,6 +18,11 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 	fn := "SendMessage"
 	log := s.logger.With(sl.Method(fn))
 
+	history, err := s.convProvider.Conversation(ctx, in.ConversationId)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", fn, err)
+	}
+
 	if err := s.messageSaver.SaveQuestion(ctx, &models.Question{
 		Message: models.Message{
 			ConversationId: in.ConversationId,
@@ -34,8 +39,20 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 	done := make(chan error)
 	sum := new(bytes.Buffer)
 
+	req := &models.StreamRequest{
+		Input:       in.Body,
+		ChatHistory: make([]models.ChatHistoryEntry, 0, len(history.Messages)),
+	}
+
+	for _, m := range history.Messages {
+		req.ChatHistory = append(req.ChatHistory, models.ChatHistoryEntry{
+			IsUser: m.IsUser,
+			Body:   m.Body,
+		})
+	}
+
 	go func() {
-		m, err := s.rag.Stream(ctx, in.Body, events)
+		m, err := s.rag.Stream(ctx, req, events)
 		done <- err
 		if err != nil {
 			log.Error("failed to stream rag response", sl.Err(err))

@@ -40,6 +40,17 @@ definitions:
         type: integer
       isUser:
         type: boolean
+      meta:
+        $ref: '#/definitions/handlers.Meta'
+    type: object
+  handlers.Meta:
+    properties:
+      fileId:
+        type: string
+      fileName:
+        type: string
+      slideNum:
+        type: integer
     type: object
   handlers.SendMessageRequest:
     properties:

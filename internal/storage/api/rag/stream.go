@@ -30,14 +30,27 @@ type data struct {
 	*Response
 }
 
-func (a *Api) Stream(ctx context.Context, input string, eventCh chan<- []byte) (*models.AnswerMeta, error) {
+func (a *Api) Stream(ctx context.Context, in *models.StreamRequest, eventCh chan<- []byte) (*models.AnswerMeta, error) {
 	defer close(eventCh)
 
 	fn := "Stream"
 	log := a.logger.With(sl.Method(fn))
 
+	chathistory := make([][2]string, len(in.ChatHistory))
+
+	for i, entry := range in.ChatHistory {
+		who := "ai"
+		if entry.IsUser {
+			who = "human"
+		}
+
+		chathistory[i][0] = who
+		chathistory[i][1] = entry.Body
+	}
+
 	body, err := json.Marshal(map[string]any{
-		"input": input,
+		"input":        in,
+		"chat_history": chathistory,
 	})
 	if err != nil {
 		log.Error("failed to marshal request", sl.Err(err))

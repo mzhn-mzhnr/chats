@@ -182,6 +182,23 @@ const docTemplate = `{
                 },
                 "isUser": {
                     "type": "boolean"
+                },
+                "meta": {
+                    "$ref": "#/definitions/handlers.Meta"
+                }
+            }
+        },
+        "handlers.Meta": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "slideNum": {
+                    "type": "integer"
                 }
             }
         },

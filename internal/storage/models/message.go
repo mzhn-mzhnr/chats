@@ -12,6 +12,16 @@ type Question struct {
 	Message
 }
 
+type ChatHistoryEntry struct {
+	IsUser bool
+	Body   string
+}
+
+type StreamRequest struct {
+	Input       string `json:"input"`
+	ChatHistory []ChatHistoryEntry
+}
+
 type Answer struct {
 	Message
 	AnswerMeta

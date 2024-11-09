@@ -109,7 +109,7 @@ func SendMessage(cs *chatservice.Service) echo.HandlerFunc {
 		for {
 			select {
 			case <-c.Request().Context().Done():
-				log.Info("SSE client disconnected, ip: %v", c.RealIP())
+				log.Info("SSE client disconnected", slog.Any("ip", c.RealIP()))
 				return nil
 			case event, ok := <-eventCh:
 				if !ok {
@@ -120,6 +120,7 @@ func SendMessage(cs *chatservice.Service) echo.HandlerFunc {
 				e := Event{
 					Data: event,
 				}
+
 				log.Debug("marshaling event", slog.String("event", string(e.Data)))
 				if err := e.MarshalTo(w); err != nil {
 					return err

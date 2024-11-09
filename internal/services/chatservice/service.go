@@ -23,7 +23,7 @@ type MessageSaver interface {
 }
 
 type RagProvider interface {
-	Stream(ctx context.Context, input string, eventCh chan<- []byte) (*models.AnswerMeta, error)
+	Stream(ctx context.Context, input *models.StreamRequest, eventCh chan<- []byte) (*models.AnswerMeta, error)
 }
 
 type Service struct {
