@@ -9,6 +9,7 @@ import (
 	"mzhn/chats/internal/services/authservice"
 	"mzhn/chats/internal/services/chatservice"
 	"mzhn/chats/internal/storage/api/auth"
+	"mzhn/chats/internal/storage/api/rag"
 	"mzhn/chats/internal/storage/pg/conversations"
 	"mzhn/chats/internal/transport/http"
 	"mzhn/chats/internal/transport/queue"
@@ -37,9 +38,11 @@ func New() (*App, func(), error) {
 		wire.Bind(new(chatservice.ConversationCreator), new(*conversations.Repository)),
 		wire.Bind(new(chatservice.ConversationsProvider), new(*conversations.Repository)),
 		wire.Bind(new(chatservice.MessageSaver), new(*conversations.Repository)),
+		wire.Bind(new(chatservice.RagProvider), new(*rag.Api)),
 
 		conversations.New,
 		auth.New,
+		rag.New,
 
 		_redis,
 		_pgxpool,
@@ -66,14 +69,14 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, shttp *http.Server, rq *queue.RedisConsumer) []Server {
+func _servers(cfg *config.Config, shttp *http.Server, _ *queue.RedisConsumer) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
 		servers = append(servers, shttp)
 	}
 
-	servers = append(servers, rq)
+	// servers = append(servers, rq)
 
 	return servers
 }

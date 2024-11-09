@@ -21,22 +21,29 @@ type MessageSaver interface {
 	SaveMessage(ctx context.Context, in *models.NewMessage) error
 }
 
+type RagProvider interface {
+	Stream(ctx context.Context, input string, eventCh chan<- []byte) error
+}
+
 type Service struct {
 	logger       *slog.Logger
 	messageSaver MessageSaver
 	convProvider ConversationsProvider
 	convCreator  ConversationCreator
+	rag          RagProvider
 }
 
 func New(
 	msgsaver MessageSaver,
 	convprovider ConversationsProvider,
 	convcreator ConversationCreator,
+	rag RagProvider,
 ) *Service {
 	return &Service{
 		logger:       slog.With(sl.Module("chatservice")),
 		messageSaver: msgsaver,
 		convProvider: convprovider,
 		convCreator:  convcreator,
+		rag:          rag,
 	}
 }

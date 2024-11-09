@@ -9,7 +9,7 @@ services:
       WAIT_HOSTS: pgc:5432
       PG_HOST: pgc
       PG_PORT: 5432
-      ENV: prod
+      ENV: local
     depends_on:
       - pgc
     ports:

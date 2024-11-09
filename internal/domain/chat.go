@@ -9,6 +9,7 @@ type NewMessage struct {
 	ConversationId string
 	IsUser         bool
 	CreatedAt      time.Time
+	EventCh        chan<- []byte
 }
 
 type SentMessage struct {

@@ -1,4 +1,4 @@
-basePath: /
+basePath: /conversations/
 definitions:
   handlers.Conversation:
     properties:
@@ -40,6 +40,13 @@ definitions:
         type: integer
       isUser:
         type: boolean
+    type: object
+  handlers.SendMessageRequest:
+    properties:
+      conversationId:
+        type: string
+      input:
+        type: string
     type: object
 info:
   contact:
@@ -87,6 +94,25 @@ paths:
       security:
       - Bearer: []
       summary: Получение диалога по ID
+      tags:
+      - conversation
+  /send:
+    post:
+      parameters:
+      - description: Данные для отправки
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SendMessageRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SendMessageRequest'
+      security:
+      - Bearer: []
+      summary: Send message
       tags:
       - conversation
 securityDefinitions:

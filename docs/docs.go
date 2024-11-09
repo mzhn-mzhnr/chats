@@ -57,6 +57,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/send": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "conversation"
+                ],
+                "summary": "Send message",
+                "parameters": [
+                    {
+                        "description": "Данные для отправки",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SendMessageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SendMessageRequest"
+                        }
+                    }
+                }
+            }
+        },
         "/{id}": {
             "get": {
                 "security": [
@@ -152,6 +184,17 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "handlers.SendMessageRequest": {
+            "type": "object",
+            "properties": {
+                "conversationId": {
+                    "type": "string"
+                },
+                "input": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -167,7 +210,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.1",
 	Host:             "",
-	BasePath:         "/",
+	BasePath:         "/conversations/",
 	Schemes:          []string{},
 	Title:            "MZHN Chat API",
 	Description:      "Chat Api Service",

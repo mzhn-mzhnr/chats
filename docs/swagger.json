@@ -8,7 +8,7 @@
         },
         "version": "0.1"
     },
-    "basePath": "/",
+    "basePath": "/conversations/",
     "paths": {
         "/": {
             "get": {
@@ -45,6 +45,38 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.CreateConversationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/send": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "conversation"
+                ],
+                "summary": "Send message",
+                "parameters": [
+                    {
+                        "description": "Данные для отправки",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SendMessageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SendMessageRequest"
                         }
                     }
                 }
@@ -143,6 +175,17 @@
                 },
                 "isUser": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.SendMessageRequest": {
+            "type": "object",
+            "properties": {
+                "conversationId": {
+                    "type": "string"
+                },
+                "input": {
+                    "type": "string"
                 }
             }
         }

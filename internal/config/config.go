@@ -43,6 +43,10 @@ type AuthApi struct {
 	Host string `env:"AUTH_API_HOST" env-required:"true"`
 }
 
+type RagApi struct {
+	Host string `env:"RAG_API_HOST" env-required:"true"`
+}
+
 type Redis struct {
 	Host string `env:"REDIS_HOST" env-default:"localhost"`
 	Port int    `env:"REDIS_PORT" env-default:"6379"`
@@ -57,6 +61,7 @@ type Config struct {
 	Redis   Redis
 	Pg      Pg
 	AuthApi AuthApi
+	RagApi  RagApi
 }
 
 func New() *Config {

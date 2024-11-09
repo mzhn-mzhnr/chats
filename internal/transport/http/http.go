@@ -51,9 +51,11 @@ func (h *Server) setup() {
 	h.GET("/docs/*", eswag.WrapHandler)
 
 	authguard := middleware.AuthGuard(h.as)
+	// TODO owner guard
 	h.GET("/", handlers.GetConversations(h.cs), authguard())
 	h.GET("/:id", handlers.GetConversation(h.cs), authguard())
 	h.POST("/", handlers.CreateConversation(h.cs), authguard())
+	h.POST("/send", handlers.SendMessage(h.cs), authguard())
 }
 
 // @title			MZHN Chat API

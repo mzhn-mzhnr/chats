@@ -16,6 +16,7 @@ import (
 	"mzhn/chats/internal/services/authservice"
 	"mzhn/chats/internal/services/chatservice"
 	"mzhn/chats/internal/storage/api/auth"
+	"mzhn/chats/internal/storage/api/rag"
 	"mzhn/chats/internal/storage/pg/conversations"
 	"mzhn/chats/internal/transport/http"
 	"mzhn/chats/internal/transport/queue"
@@ -35,9 +36,10 @@ func New() (*App, func(), error) {
 		return nil, nil, err
 	}
 	repository := conversations.New(pool)
-	service := chatservice.New(repository, repository, repository)
-	api := auth.New(configConfig)
-	authserviceService := authservice.New(api)
+	api := rag.New(configConfig)
+	service := chatservice.New(repository, repository, repository, api)
+	authApi := auth.New(configConfig)
+	authserviceService := authservice.New(authApi)
 	server := http.New(configConfig, service, authserviceService)
 	client, cleanup2, err := _redis(configConfig)
 	if err != nil {
@@ -73,14 +75,12 @@ func _pgxpool(cfg *config.Config) (*pgxpool.Pool, func(), error) {
 	return db, func() { db.Close() }, nil
 }
 
-func _servers(cfg *config.Config, shttp *http.Server, rq *queue.RedisConsumer) []Server {
+func _servers(cfg *config.Config, shttp *http.Server, _ *queue.RedisConsumer) []Server {
 	servers := make([]Server, 0, 2)
 
 	if cfg.Http.Enabled {
 		servers = append(servers, shttp)
 	}
-
-	servers = append(servers, rq)
 
 	return servers
 }
