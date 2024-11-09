@@ -17,6 +17,10 @@
 - [wire](https://github.com/google/wire) (compile-time DI-контейнер)
 - JWT
 
+## Flow отправки сообщения
+
+[!flow](./.github/question-flow.png)
+
 ## Конфигурация
 
 Приложение настраивается при помощи переменных среды (Environment variables)
