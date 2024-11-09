@@ -1,10 +1,10 @@
-# MZHN AUTH SERVICE
+# MZHN CHATS SERVICE
 
 ## DEPLOY
 
 ### Docker
 
-1. Склонируйте репозиторий `git clone  `
+1. Склонируйте репозиторий `git clone https://github.com/mzhn-mzhnr/chats.git`
 2. Настройте конфиг приложения. Для этого выполните команду
 
 ```bash
