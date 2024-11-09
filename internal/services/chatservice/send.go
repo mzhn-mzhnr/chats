@@ -14,7 +14,7 @@ func (s *Service) SendMessage(ctx context.Context, in *domain.NewMessage) (*doma
 
 	if err := s.messageSaver.SaveMessage(ctx, &models.NewMessage{
 		ConversationId: in.ConversationId,
-		IsUser:         in.UserId != nil,
+		IsUser:         in.IsUser,
 		Body:           in.Body,
 		CreatedAt:      in.CreatedAt,
 	}); err != nil {

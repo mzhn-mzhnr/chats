@@ -6,8 +6,8 @@ import (
 
 type NewMessage struct {
 	Body           string
-	UserId         *string
 	ConversationId string
+	IsUser         bool
 	CreatedAt      time.Time
 }
 

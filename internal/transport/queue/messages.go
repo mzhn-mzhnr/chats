@@ -48,8 +48,8 @@ func (c *RedisConsumer) Run(ctx context.Context) error {
 		_, err = c.chatsService.SendMessage(ctx, &domain.NewMessage{
 			ConversationId: handledMessage.ConversationId,
 			Body:           handledMessage.Question.Message,
-			UserId:         &handledMessage.UserId,
 			CreatedAt:      handledMessage.Question.CreatedAt,
+			IsUser:         true,
 		})
 		if err != nil {
 			c.logger.Error("error when sending a message", slog.Any("error", err))
@@ -58,8 +58,8 @@ func (c *RedisConsumer) Run(ctx context.Context) error {
 		_, err = c.chatsService.SendMessage(ctx, &domain.NewMessage{
 			ConversationId: handledMessage.ConversationId,
 			Body:           handledMessage.Answer.Message,
-			UserId:         nil,
 			CreatedAt:      handledMessage.Answer.CreatedAt,
+			IsUser:         false,
 		})
 		if err != nil {
 			c.logger.Error("error when sending a message", slog.Any("error", err))
